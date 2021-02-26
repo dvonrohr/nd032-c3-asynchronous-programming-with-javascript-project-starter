@@ -65,16 +65,20 @@ async function handleCreateRace() {
 
   const { player_id, track_id } = store;
 
-  const race = await createRace(player_id, track_id);
+  try {
+    const race = await createRace(player_id, track_id);
 
-  store.race_id = race.ID;
+    // fix for issue: https://github.com/udacity/nd032-c3-asynchronous-programming-with-javascript-project-starter/issues/6
+    store.race_id = parseInt(race.ID) - 1;
 
-  await runCountdown();
+    await runCountdown();
 
-  // fix for issue: https://github.com/udacity/nd032-c3-asynchronous-programming-with-javascript-project-starter/issues/6
-  const response = await startRace(race.ID - 1);
+    await startRace(store.race_id);
 
-  await runRace(race.ID - 1);
+    await runRace(store.race_id);
+  } catch (error) {
+    console.error("an error occured", error.message);
+  }
 }
 
 function runRace(raceID) {
@@ -142,11 +146,11 @@ function handleSelectTrack(target) {
 
   target.classList.add("selected");
 
-  store.track_id = target.id;
+  store.track_id = parseInt(target.id);
 }
 
-async function handleAccelerate() {
-  await accelerate(store.player_id);
+function handleAccelerate() {
+  accelerate(store.track_id - 1);
 }
 
 function renderRacerCars(racers) {
@@ -341,5 +345,7 @@ function accelerate(id) {
   return fetch(`${SERVER}/api/races/${id}/accelerate`, {
     method: "POST",
     ...defaultFetchOpts(),
-  }).catch((err) => logRequestError);
+  })
+    .then((res) => resolve(res))
+    .catch((err) => logRequestError);
 }

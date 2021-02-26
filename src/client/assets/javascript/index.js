@@ -65,6 +65,11 @@ async function handleCreateRace() {
 
   const { player_id, track_id } = store;
 
+  if (!track_id || !player_id) {
+    alert(`Please select track and racer to start the race!`);
+    return;
+  }
+
   try {
     const race = await createRace(player_id, track_id);
 

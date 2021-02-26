@@ -338,7 +338,7 @@ function startRace(id) {
     ...defaultFetchOpts(),
     method: "POST",
     mode: "cors",
-  });
+  }).catch(logRequestError);
 }
 
 function accelerate(id) {

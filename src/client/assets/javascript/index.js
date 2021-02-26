@@ -145,8 +145,8 @@ function handleSelectTrack(target) {
   store.track_id = target.id;
 }
 
-function handleAccelerate() {
-  accelerate(store.player_id);
+async function handleAccelerate() {
+  await accelerate(store.player_id);
 }
 
 function renderRacerCars(racers) {
@@ -341,7 +341,5 @@ function accelerate(id) {
   return fetch(`${SERVER}/api/races/${id}/accelerate`, {
     method: "POST",
     ...defaultFetchOpts(),
-  })
-    .then((resp) => res.json())
-    .catch((err) => logRequestError);
+  }).catch((err) => logRequestError);
 }
